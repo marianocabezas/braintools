@@ -1,0 +1,12 @@
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/edit_cache.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/rebuild_cache.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/PreTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/CoregTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/AtlasTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/SubtractionTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/DeformableTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/PostTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/TissueTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/HistogramTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/AnalyseTool.dir
+/home/mariano/BrainToolsCARM/QtCreator/CMakeFiles/Test.dir
