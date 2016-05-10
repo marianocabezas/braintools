@@ -1,1 +1,0 @@
-/usr/bin/c++     -ftemplate-depth-50 -Wall -Wno-deprecated -msse2 -O3 -DNDEBUG    CMakeFiles/Test.dir/testmain.o  -o Test  -L/usr/local/ITK3/Build/bin -rdynamic 
