@@ -1,4 +1,4 @@
-# BrainTools: C++ code based on ITK for brain MRI processing.
+# BrainTools: C++ toolbox based on ITK for brain MRI processing.
 
 __BrainTools__ is a C++ repository with several fully automated tools to process brain MRI data from MS patients. Currently it implements _bias correction_ using the __N4__ algorithm; _atlas registration_ using affine and b-splines transformations; _tissue segmentation_ based on <a name="deref1">[[1](#ref1)]</a>; _lesion segmentation and detection_ also based on [[1](#ref1)]; and, _longitudinal lesion analysis_ based on <a name="deref2">[[2](#ref2)]</a><a name="deref3">[[3](#ref3)]</a>.
 
