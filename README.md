@@ -224,7 +224,7 @@ if __name__ == '__main__':
     main()
 ```
 
-<a name="ref1">[[1](#deref1)]</a> M. Cabezas, A. Oliver, E. Roura, J. Freixenet, J.C Vilanova, Ll. Ramió-Torrentà, A. Rovira, X. Lladó. [_Automatic multiple sclerosis lesion detection in brain MRI by FLAIR thresholding_. __Computer Methods and Programs in Biomedicine__](http://dx.doi.org/), 115(3), pp. 147-161. 2014
+<a name="ref1">[[1](#deref1)]</a> M. Cabezas, A. Oliver, E. Roura, J. Freixenet, J.C Vilanova, Ll. Ramió-Torrentà, A. Rovira, X. Lladó. [_Automatic multiple sclerosis lesion detection in brain MRI by FLAIR thresholding_](http://dx.doi.org/). __Computer Methods and Programs in Biomedicine__, 115(3), pp. 147-161. 2014
 
 <a name="ref2">[[2](#deref2)]</a> M. Cabezas, J.F. Corral, A. Oliver, Y. Diez, M. Tintore, C. Auger, X. Montalban, X. Lladó, D. Pareto, A. Rovira. [_Automatic multiple sclerosis lesion detection in brain MRI by FLAIR thresholding_](http://dx.doi.org/10.1016/j.cmpb.2014.04.006). __American Journal of Neuroradiology__, to appear. 2016 
 
