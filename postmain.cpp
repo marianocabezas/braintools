@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 			subtractionFolderName = followupFolderName + argv[6];
 			deformationFolderName = followupFolderName + argv[7];
 		default:
-			std::cerr << "Incorrect number of parameters." << std::endl << "Correct usage: SubtractionTool baseline_folder followup_folder [images_folder] [transforms_folder] [segmentation_folder] [subtraction_folder] [deformation_folder]" << std::endl; 
+            std::cerr << "Incorrect number of parameters." << std::endl << "Correct usage: PostTool baseline_folder followup_folder [images_folder] [transforms_folder] [segmentation_folder] [subtraction_folder] [deformation_folder]" << std::endl;
 			return EXIT_FAILURE;
 			break;
 	}

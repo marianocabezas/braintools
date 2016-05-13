@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 			atlasFolderName = baseFolderName + argv[4];
 			segmentationFolderName = baseFolderName + argv[5];
 		default:
-			std::cerr << "Incorrect number of parameters." << std::endl << "Correct usage: AtlasTool base_folder [images_folder] [transforms_folder] [atlas_folder] [segmentation_folder]" << std::endl; 
+            std::cerr << "Incorrect number of parameters." << std::endl << "Correct usage: TissueTool base_folder [images_folder] [transforms_folder] [atlas_folder] [segmentation_folder]" << std::endl;
 			return EXIT_FAILURE;
 			break;
 	}
