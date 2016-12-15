@@ -1473,7 +1473,7 @@ ProbabilityImage BrainRegistration::Divergence(DeformationField deformation) {
 	GradientIterator itGz = GradientIterator(gz, gz->GetLargestPossibleRegion());
 
 	for (itDiv.GoToBegin(); !itDiv.IsAtEnd(); ++itDiv, ++itGx, ++itGy, ++itGz)
-		itDiv.Set(itGx.Get()[0]+itGx.Get()[1]+itGx.Get()[2]);
+        itDiv.Set(itGx.Get()[0]+itGy.Get()[1]+itGz.Get()[2]);
 
 	return( divergence );
 }
