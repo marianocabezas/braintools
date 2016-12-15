@@ -1404,9 +1404,9 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
     final->FillBuffer(false);
     final->Update();
 
-	/* -- Lesion labeling -- */
-	ConnectComponentFilterType::Pointer connectedFilter = ConnectComponentFilterType::New();
-	connectedFilter->SetInput(activity);
+    /* -- Lesion labeling -- */
+    ConnectComponentFilterType::Pointer connectedFilter = ConnectComponentFilterType::New();
+    connectedFilter->SetInput(activity);
     connectedFilter->Update();
 
     ConnectedImage lesions = connectedFilter->GetOutput();
@@ -1416,123 +1416,124 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
     maxComponentCalculator->Compute();
     ConnectedPixelType maxLabel = maxComponentCalculator->GetMaximum();
 
-	/* -- Intensity compiling and lesion size computation -- */
-	// Mean, standard deviation and size per lesion
-	double global_mean = 0, global_lesion_size = 0, global_std = 0;
-	int *lesion_size = new int[maxLabel];
-	double *mean_basal = new double[maxLabel];
-	double *mean_neigh_basal = new double[maxLabel];
-	double *mean_following = new double[maxLabel];
-	double *mean_neigh_following = new double[maxLabel];
-	double *bnr = new double[maxLabel];
-	double *fnr = new double[maxLabel];
-	bool *checked = new bool[maxLabel];
-	std::fill_n(lesion_size, maxLabel, 0);
-	std::fill_n(mean_basal, maxLabel, 0);
-	std::fill_n(mean_neigh_basal, maxLabel, 0);
-	std::fill_n(mean_following, maxLabel, 0);
-	std::fill_n(mean_neigh_following, maxLabel, 0);
-	std::fill_n(bnr, maxLabel, 0);
-	std::fill_n(fnr, maxLabel, 0);
-	std::fill_n(checked, maxLabel, false);
+    /* -- Intensity compiling and lesion size computation -- */
+    // Mean, standard deviation and size per lesion
+    double global_mean = 0, global_lesion_size = 0, global_std = 0;
+    int *lesion_size = new int[maxLabel];
+    double *mean_basal = new double[maxLabel];
+    double *mean_neigh_basal = new double[maxLabel];
+    double *mean_following = new double[maxLabel];
+    double *mean_neigh_following = new double[maxLabel];
+    double *bnr = new double[maxLabel];
+    double *fnr = new double[maxLabel];
+    bool *checked = new bool[maxLabel];
+    std::fill_n(lesion_size, maxLabel, 0);
+    std::fill_n(mean_basal, maxLabel, 0);
+    std::fill_n(mean_neigh_basal, maxLabel, 0);
+    std::fill_n(mean_following, maxLabel, 0);
+    std::fill_n(mean_neigh_following, maxLabel, 0);
+    std::fill_n(bnr, maxLabel, 0);
+    std::fill_n(fnr, maxLabel, 0);
+    std::fill_n(checked, maxLabel, false);
 
-	// Intensity vector
-	ProbabilityVector intensities;
+    // Intensity vector
+    ProbabilityVector intensities;
 
-	// Iterators
-	ProbabilityIterator itBasal = ProbabilityIterator(basal, basal->GetLargestPossibleRegion());
-	ProbabilityIterator itFollowing = ProbabilityIterator(following, following->GetLargestPossibleRegion());
-	ConnectedIterator itComp = ConnectedIterator(lesions, lesions->GetLargestPossibleRegion());
-	ConnectedNeighborhoodIterator::RadiusType radius;
+    // Iterators
+    ProbabilityIterator itBasal = ProbabilityIterator(basal, basal->GetLargestPossibleRegion());
+    ProbabilityIterator itFollowing = ProbabilityIterator(following, following->GetLargestPossibleRegion());
+    ConnectedIterator itComp = ConnectedIterator(lesions, lesions->GetLargestPossibleRegion());
+    ConnectedNeighborhoodIterator::RadiusType radius;
     for (int i = 0; i < IntensityImageType::ImageDimension; ++i)
         radius[i] = 1;
     ConnectedNeighborhoodIterator itNeighbors = ConnectedNeighborhoodIterator(radius, lesions, lesions->GetLargestPossibleRegion());
 	
-	ConnectedPixelType label, neigh_label;
+    ConnectedPixelType label, neigh_label;
 
-	std::cout << "\t\\- Mean computation + intensity storage" << std::endl;
-	// Mean computation + intensity storage
-	for (itComp.GoToBegin(); !itComp.IsAtEnd(); ++itComp, ++itBasal, ++itFollowing, ++itNeighbors) {
-		label = itComp.Get();
-		// We check the lesion intensities
-		if (label > 0) {
-			intensities.push_back(itBasal.Get());
+    std::cout << "\t\\- Mean computation + intensity storage" << std::endl;
+    // Mean computation + intensity storage
+    for (itComp.GoToBegin(); !itComp.IsAtEnd(); ++itComp, ++itBasal, ++itFollowing, ++itNeighbors) {
+        label = itComp.Get();
+        // We check the lesion intensities
+        if (label > 0) {
+            intensities.push_back(itBasal.Get());
 
-			mean_basal[label-1] += itBasal.Get();
-			mean_following[label-1] += itFollowing.Get();
+            mean_basal[label-1] += itBasal.Get();
+            mean_following[label-1] += itFollowing.Get();
 
-			global_lesion_size++;
-			global_mean += itBasal.Get();
+            global_lesion_size++;
+            global_mean += itBasal.Get();
 
-			lesion_size[label-1]++;
-		}
-		// We check the neighbours intensity
-		else {
-			for (int i = 0; i < itNeighbors.Size(); ++i) {
-				neigh_label = itNeighbors.GetPixel(i);
-				if ( neigh_label > 0 && !checked[neigh_label-1]) {
-					checked[neigh_label-1] = true;
-					mean_neigh_basal[neigh_label] += itBasal.Get();
-					mean_neigh_following[neigh_label] += itFollowing.Get();
-				}
-			}
-		}
+            lesion_size[label-1]++;
+        }
+        // We check the neighbours intensity
+        else {
+            for (int i = 0; i < itNeighbors.Size(); ++i) {
+                neigh_label = itNeighbors.GetPixel(i);
+                if ( neigh_label > 0 && !checked[neigh_label-1]) {
+                    checked[neigh_label-1] = true;
+                    mean_neigh_basal[neigh_label-1] += itBasal.Get();
+                    mean_neigh_following[neigh_label-1] += itFollowing.Get();
+                }
+            }
+        }
 
-		std::fill_n(checked, maxLabel, false);
-	}
+        std::fill_n(checked, maxLabel, false);
+    }
 
-	global_mean /= global_lesion_size;
+    global_mean /= global_lesion_size;
 
-	for (label = 0; label < maxLabel; label++) {
-		mean_basal[label] /= lesion_size[label];
-		mean_neigh_basal[label] /= lesion_size[label];
-		bnr[label] = mean_basal[label] / mean_neigh_basal[label];
-		mean_following[label] /= lesion_size[label];
-		mean_neigh_following[label] /= lesion_size[label];
-		fnr[label] = mean_following[label] / mean_neigh_following[label];
-	}
+    for (label = 0; label < maxLabel; label++) {
+        mean_basal[label] /= lesion_size[label];
+        mean_neigh_basal[label] /= lesion_size[label];
+        bnr[label] = mean_basal[label] / mean_neigh_basal[label];
+        mean_following[label] /= lesion_size[label];
+        mean_neigh_following[label] /= lesion_size[label];
+        fnr[label] = mean_following[label] / mean_neigh_following[label];
+    }
 
-	for (ProbabilityVector::iterator voxel = intensities.begin(); voxel != intensities.end(); voxel++)
-		global_std += (*voxel - global_mean) * (*voxel - global_mean);
+    for (ProbabilityVector::iterator voxel = intensities.begin(); voxel != intensities.end(); voxel++)
+        global_std += (*voxel - global_mean) * (*voxel - global_mean);
 
-	global_std /= global_lesion_size;
-	global_std = sqrt(global_std);
+    global_std /= global_lesion_size;
+    global_std = sqrt(global_std);
 	
 
-	/*-- Thresholding (size, BNR, FNR and intensity) -- */
-	std::cout << "\t\\- Thresholding" << std::endl;
-	MaskIterator itFinal = MaskIterator(final, final->GetLargestPossibleRegion());
-	bool bnr_condition, fnr_condition, size_condition, intensity_condition;
-	for (itComp.GoToBegin(); !itComp.IsAtEnd(); ++itComp, ++itFinal) {
-		label = itComp.Get();
-		if (label > 0) {
-			bnr_condition = true;
-			//bnr_condition= bnr[label-1] > bnr_t;
-			fnr_condition = true;
-			//fnr_condition = fnr[label-1] > fnr_t;
-			//size_condition = true;
-			size_condition = lesion_size[label-1] > minSize;
-			//intensity_condition = mean_basal[label-1] > (global_mean - 2*global_std);
-			intensity_condition = true;
-			itFinal.Set(bnr_condition & fnr_condition & size_condition & intensity_condition);
-		}
-	}
+    /*-- Thresholding (size, BNR, FNR and intensity) -- */
+    std::cout << "\t\\- Thresholding" << std::endl;
+    MaskIterator itFinal = MaskIterator(final, final->GetLargestPossibleRegion());
+    bool bnr_condition, fnr_condition, size_condition, intensity_condition;
+    for (itComp.GoToBegin(); !itComp.IsAtEnd(); ++itComp, ++itFinal) {
+        label = itComp.Get();
+        if (label > 0) {
+            //bnr_condition = true;
+            bnr_condition = bnr[label-1] > bnr_t;
+            //fnr_condition = true;
+            fnr_condition = fnr[label-1] > fnr_t;
+            //size_condition = true;
+            size_condition = lesion_size[label-1] > minSize;
+            //intensity_condition = true;
+            intensity_condition = mean_basal[label-1] > (global_mean - 2*global_std);
+            itFinal.Set(bnr_condition & fnr_condition & size_condition & intensity_condition);
+        }
+    }
+    std::cout << "\t\\- Done" << std::endl;
 
-	delete[] lesion_size;
-	delete[] mean_basal;
-	delete[] mean_neigh_basal;
-	delete[] mean_following;
-	delete[] mean_neigh_following;
-	delete[] bnr;
-	delete[] fnr;
-	delete[] checked;
+    delete[] lesion_size;
+    delete[] mean_basal;
+    delete[] mean_neigh_basal;
+    delete[] mean_following;
+    delete[] mean_neigh_following;
+    delete[] bnr;
+    delete[] fnr;
+    delete[] checked;
 
-	return(final);
+    return(final);
 }
 
 MaskImage BrainSegmentation::DeformationPostProcessing(MaskImage activity, ProbabilityImage jacobian, ProbabilityImage divergence, int minSize, double jacobian_t, double divergence_t) {
 	typedef std::vector<ProbabilityPixelType> ProbabilityVector;
-    std::cout << "\tBrainSegmentation::OnurPostProcessing" << std::endl;
+    std::cout << "\tBrainSegmentation::DeformationPostProcessing" << std::endl;
 	MaskImage final = BrainIO::Initialise<MaskImageType,MaskImageType>(activity);
     final->FillBuffer(false);
     final->Update();

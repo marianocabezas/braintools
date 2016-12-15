@@ -154,98 +154,103 @@ int main(int argc, char **argv)
 	FileNameType flairPositiveActivityName = subtractionFolderName + "flair_positive_activity.nii.gz";
 	MaskImage flairPositiveActivity = brainio->ReadMaskImage(flairPositiveActivityName);
 
-	std::cout << "\t-------------------------------" << std::endl;
+    std::cout << "\t-------------------------------" << std::endl;
     std::cout << "\t          Joint mask           " << std::endl;
     std::cout << "\t-------------------------------" << std::endl;
-	std::vector<MaskImage> masks;
-	if (pdPositiveActivity != (MaskImage)NULL)
-		masks.push_back(pdPositiveActivity);
-	if (t2PositiveActivity != (MaskImage)NULL)
-		masks.push_back(t2PositiveActivity);
-	if (flairPositiveActivity != (MaskImage)NULL)
-		masks.push_back(flairPositiveActivity);
-	MaskImage intersection = BrainSegmentation::Intersection(masks);
-	brainio->WriteMaskImage(
-		subtractionFolderName + "joint_positive_activity.nii.gz",
-		intersection
-	);
+    std::vector<MaskImage> masks;
+    if (pdPositiveActivity != (MaskImage)NULL)
+        masks.push_back(pdPositiveActivity);
+    if (t2PositiveActivity != (MaskImage)NULL)
+        masks.push_back(t2PositiveActivity);
+    if (flairPositiveActivity != (MaskImage)NULL)
+        masks.push_back(flairPositiveActivity);
+    MaskImage intersection = BrainSegmentation::Intersection(masks);
+    brainio->WriteMaskImage(
+        subtractionFolderName + "joint_positive_activity.nii.gz",
+        intersection
+    );
 
-	ConnectComponentFilterType::Pointer connectedFilter = ConnectComponentFilterType::New();
-	connectedFilter->SetInput(intersection);
+    ConnectComponentFilterType::Pointer connectedFilter = ConnectComponentFilterType::New();
+    connectedFilter->SetInput(intersection);
     connectedFilter->Update();
 
     ConnectedImage labels = connectedFilter->GetOutput();
 	
-	brainio->WriteConnectedImage(
-		subtractionFolderName + "joint_labels_positive_activity.nii.gz",
-		labels
-	);
+    brainio->WriteConnectedImage(
+        subtractionFolderName + "joint_labels_positive_activity.nii.gz",
+        labels
+    );
 
 	
-	std::cout << "\t-------------------------------" << std::endl;
+    std::cout << "\t-------------------------------" << std::endl;
     std::cout << "\t     Demons postprocessing     " << std::endl;
     std::cout << "\t-------------------------------" << std::endl;
-	if (pdPositiveActivity != (MaskImage)NULL) {
-		MaskImage pdLesions = BrainSegmentation::DeformationPostProcessing(pdPositiveActivity, pdJacobian, pdDivergence);
-		brainio->WriteMaskImage(
-			subtractionFolderName + "pd_demons_positive_activity.nii.gz",
-			pdLesions
-		);
-	}
-	if (t2PositiveActivity != (MaskImage)NULL) {
-		MaskImage t2Lesions = BrainSegmentation::DeformationPostProcessing(t2PositiveActivity, t2Jacobian, t2Divergence);
-		brainio->WriteMaskImage(
-			subtractionFolderName + "t2_demons_positive_activity.nii.gz",
-			t2Lesions
-		);
-	}
-	if  (flairPositiveActivity != (MaskImage)NULL) {
-		MaskImage flairLesions = BrainSegmentation::DeformationPostProcessing(flairPositiveActivity, flairJacobian, flairDivergence);
-		brainio->WriteMaskImage(
-			subtractionFolderName + "flair_demons_positive_activity.nii.gz",
-			flairLesions
-		);
-	}
-	MaskImage lesions = BrainSegmentation::DeformationPostProcessing(intersection, jacobian, divergence);
-	brainio->WriteMaskImage(
-		subtractionFolderName + "joint_demons_positive_activity.nii.gz",
-		lesions
-	);
+    if (pdPositiveActivity != (MaskImage)NULL) {
+        MaskImage pdLesions = BrainSegmentation::DeformationPostProcessing(pdPositiveActivity, pdJacobian, pdDivergence);
+        brainio->WriteMaskImage(
+            subtractionFolderName + "pd_demons_positive_activity.nii.gz",
+            pdLesions
+        );
+    }
+    if (t2PositiveActivity != (MaskImage)NULL) {
+        MaskImage t2Lesions = BrainSegmentation::DeformationPostProcessing(t2PositiveActivity, t2Jacobian, t2Divergence);
+        brainio->WriteMaskImage(
+            subtractionFolderName + "t2_demons_positive_activity.nii.gz",
+            t2Lesions
+        );
+    }
+    if  (flairPositiveActivity != (MaskImage)NULL) {
+        MaskImage flairLesions = BrainSegmentation::DeformationPostProcessing(flairPositiveActivity, flairJacobian, flairDivergence);
+        brainio->WriteMaskImage(
+            subtractionFolderName + "flair_demons_positive_activity.nii.gz",
+            flairLesions
+        );
+    }
+    MaskImage lesions = BrainSegmentation::DeformationPostProcessing(intersection, jacobian, divergence);
+    brainio->WriteMaskImage(
+        subtractionFolderName + "joint_demons_positive_activity.nii.gz",
+        lesions
+    );
 
 
 	std::cout << "\t-------------------------------" << std::endl;
     std::cout << "\t     Ratio postprocessing      " << std::endl;
     std::cout << "\t-------------------------------" << std::endl;
-	masks.clear();
-	if (pdPositiveActivity != (MaskImage)NULL) {
+    masks.clear();
+    if (pdPositiveActivity != (MaskImage)NULL) {
         std::cout << "\t/-- PD" << std::endl;
-		MaskImage pdLesions = BrainSegmentation::OnurPostProcessing(pdPositiveActivity, pdBaseline, pdFollowup);
+        MaskImage pdLesions = BrainSegmentation::OnurPostProcessing(pdPositiveActivity, pdBaseline, pdFollowup);
+        std::cout << "\t\t/-- Saving" << std::endl;
 		brainio->WriteMaskImage(
 			subtractionFolderName + "pd_onur_positive_activity.nii.gz",
-			pdLesions
+            pdLesions
 		);
-		masks.push_back(pdLesions);
+        std::cout << "\t\t/-- Pushing" << std::endl;
+        masks.push_back(pdLesions);
 	}
 	if (t2PositiveActivity != (MaskImage)NULL) {
         std::cout << "\t/-- T2" << std::endl;
 		MaskImage t2Lesions = BrainSegmentation::OnurPostProcessing(t2PositiveActivity, t2Baseline, t2Followup);
+        std::cout << "\t\t/-- Saving" << std::endl;
 		brainio->WriteMaskImage(
 			subtractionFolderName + "t2_onur_positive_activity.nii.gz",
 			t2Lesions
 		);
-		masks.push_back(t2Lesions);
+        masks.push_back(t2Lesions);
 	}
 	if  (flairPositiveActivity != (MaskImage)NULL) {
         std::cout << "\t/-- FLAIR" << std::endl;
 		MaskImage flairLesions = BrainSegmentation::OnurPostProcessing(flairPositiveActivity, flairBaseline, flairFollowup);
+        std::cout << "\t\t/-- Saving" << std::endl;
 		brainio->WriteMaskImage(
 			subtractionFolderName + "flair_onur_positive_activity.nii.gz",
 			flairLesions
 		);
-		masks.push_back(flairLesions);
+        masks.push_back(flairLesions);
 	}
     std::cout << "\t/-- JOINT" << std::endl;
-	MaskImage onurLesions = BrainSegmentation::Intersection(masks);
+    MaskImage onurLesions = BrainSegmentation::Intersection(masks);
+    std::cout << "\t\t/-- Saving" << std::endl;
 	brainio->WriteMaskImage(
 		subtractionFolderName + "joint_onur_positive_activity.nii.gz",
 		onurLesions

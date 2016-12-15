@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 	// Final ROI
 	MaskImage wmMask = BrainSegmentation::Union(baselineWMMaskMoved, followupWMMask);
 	brainio->WriteMaskImage(
-		baselineSegmentationFolderName + "union_wm_mask.nii.gz",
+        followupSegmentationFolderName + "union_wm_mask.nii.gz",
 		wmMask
 	);
 
