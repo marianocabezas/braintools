@@ -168,14 +168,17 @@ def main():
                         if not mask_in_folder:
                             for file in files:
                                 pd_in_folder = re.search(r'(\w|\W)*(pd|dp|PD|DP)(\w|\W)*',file)
-                                if pd_in_folder:
-                                    pd_image = '%s%s' % (timepoint_folder, file)
-                                    pd_image_stripped = '%sstripped.nii' % (timepoint_folder)
+                                t1_in_folder = re.search(r'(\w|\W)*(t1|mpr|T1|MPR)(\w|\W)*',file)
+                                if pd_in_folder or t1_in_folder:
+                                    image = '%s%s' % (timepoint_folder, file)
+                                    image_stripped = '%sstripped.nii' % (timepoint_folder)
                                     mask_image = '%sbrainmask.nii' % (timepoint_folder)
-                                    command = './ROBEX %s %s %s' % (pd_image, pd_image_stripped, mask_image)
                                     call([
-                                        command
-                                    ], stdout=f, stderr=err, shell=True)
+                                        'ROBEX.exe',
+                                        image,
+                                        image_stripped,
+                                        mask_image
+                                    ], stdout=f, stderr=err)
                                     os.remove(pd_image_stripped)
              for baseline, followup in zip(timepoints[:-1], timepoints[1:]):
                  baseline_folder = '%s%s/' % (patient_folder, baseline)
