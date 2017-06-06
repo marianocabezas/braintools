@@ -1420,6 +1420,7 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
     // Mean, standard deviation and size per lesion
     double global_mean = 0, global_lesion_size = 0, global_std = 0;
     int *lesion_size = new int[maxLabel];
+    int *neigh_lesion_size = new int[maxLabel];
     double *mean_basal = new double[maxLabel];
     double *mean_neigh_basal = new double[maxLabel];
     double *mean_following = new double[maxLabel];
@@ -1428,6 +1429,7 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
     double *fnr = new double[maxLabel];
     bool *checked = new bool[maxLabel];
     std::fill_n(lesion_size, maxLabel, 0);
+    std::fill_n(neigh_lesion_size, maxLabel, 0);
     std::fill_n(mean_basal, maxLabel, 0);
     std::fill_n(mean_neigh_basal, maxLabel, 0);
     std::fill_n(mean_following, maxLabel, 0);
@@ -1474,6 +1476,7 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
                     checked[neigh_label-1] = true;
                     mean_neigh_basal[neigh_label-1] += itBasal.Get();
                     mean_neigh_following[neigh_label-1] += itFollowing.Get();
+                    neigh_lesion_size[neigh_label-1]++;
                 }
             }
         }
@@ -1485,10 +1488,10 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
 
     for (label = 0; label < maxLabel; label++) {
         mean_basal[label] /= lesion_size[label];
-        mean_neigh_basal[label] /= lesion_size[label];
+        mean_neigh_basal[label] /= neigh_lesion_size[label];
         bnr[label] = mean_basal[label] / mean_neigh_basal[label];
         mean_following[label] /= lesion_size[label];
-        mean_neigh_following[label] /= lesion_size[label];
+        mean_neigh_following[label] /= neigh_lesion_size[label];
         fnr[label] = mean_following[label] / mean_neigh_following[label];
     }
 
@@ -1507,6 +1510,7 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
         label = itComp.Get();
         if (label > 0) {
             //bnr_condition = true;
+            std::cout << "\t\tLesion " << label << ": (BNR = " << bnr[label-1] << ", FNR = " << fnr[label-1] << ")" << std::endl;
             bnr_condition = bnr[label-1] > bnr_t;
             //fnr_condition = true;
             fnr_condition = fnr[label-1] > fnr_t;
@@ -1520,6 +1524,7 @@ MaskImage BrainSegmentation::OnurPostProcessing(MaskImage activity, ProbabilityI
     std::cout << "\t\\- Done" << std::endl;
 
     delete[] lesion_size;
+    delete[] neigh_lesion_size;
     delete[] mean_basal;
     delete[] mean_neigh_basal;
     delete[] mean_following;

@@ -73,8 +73,8 @@ class BrainSegmentation
 public:
 
     /* Constructors/Destructors */
-    BrainSegmentation() {};
-    ~BrainSegmentation() {};
+    BrainSegmentation() {}
+    ~BrainSegmentation() {}
 
     /* MS segmentation methods */
     static ResultsImage Relabel(ResultsImage tissue, MaskImage wml);
